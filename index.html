@@ -24,20 +24,63 @@
             text-align: center;
             color: #4CAF50;
         }
-        h2 {
-            color: #f39c12; /* सुनौलो रङ */
-            margin-top: 30px;
-            border-bottom: 2px solid #4CAF50;
-            padding-bottom: 10px;
-        }
-        p {
+        p.welcome-text {
             text-align: center;
             color: #cccccc;
             font-size: 18px;
+            margin-bottom: 30px;
         }
+        
+        /* Accordion (Drop-down) को डिजाइन */
+        .category-section {
+            margin-bottom: 15px;
+            border: 1px solid #444;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #3a3a3a;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .category-header:hover {
+            background-color: #4CAF50; /* माउस लग्दा हरियो हुने */
+        }
+        .category-header h2 {
+            margin: 0;
+            color: #f39c12; /* सुनौलो रङ */
+            font-size: 20px;
+        }
+        
+        /* एरो (Arrow) को डिजाइन */
+        .arrow {
+            font-size: 18px;
+            color: #ffffff;
+            transition: transform 0.3s ease;
+        }
+        .arrow.open {
+            transform: rotate(180deg); /* क्लिक गर्दा एरो घुम्ने */
+        }
+
+        /* क्याटेगरी भित्रको कन्टेन्ट */
+        .category-body {
+            display: none;
+            background-color: #2d2d2d;
+            padding: 0 15px;
+        }
+        .category-body.active {
+            display: block;
+            padding: 15px;
+        }
+        
         ul {
             list-style-type: none;
             padding: 0;
+            margin: 0;
         }
         li {
             background: #3a3a3a;
@@ -45,9 +88,10 @@
             padding: 15px;
             border-radius: 5px;
             transition: 0.3s;
+            border-left: 4px solid #4CAF50;
         }
         li:hover {
-            background: #4CAF50;
+            background: #444;
         }
         a {
             color: #ffffff;
@@ -55,11 +99,13 @@
             font-size: 18px;
             display: block;
         }
-        .category {
-            font-size: 14px;
+        .post-category-label {
+            font-size: 12px;
             color: #bdc3c7;
             margin-bottom: 5px;
             display: block;
+            text-transform: uppercase;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -67,40 +113,102 @@
 
     <div class="container">
         <h1>🎮 GamingTech Pitamber</h1>
-        <p>Welcome to my Tech, Gaming, and App knowledge base!</p>
+        <p class="welcome-text">Welcome to my Tech, Gaming, and App knowledge base!</p>
 
-        <!-- गेमिङ सम्बन्धी पोस्टहरू -->
-        <h2>🎮 Gaming (गेमिङ)</h2>
-        <ul>
-            <li>
-                <span class="category">Gaming</span>
-                <a href="dot-snake-game.html">Dot Snake Game - खेल्नुहोस् र डाउनलोड गर्नुहोस्</a>
-            </li>
-            <li>
-                <span class="category">Gaming</span>
-                <a href="block-blast-fall-game.html">Block Blast Fall - खेल्नुहोस् र डाउनलोड गर्नुहोस्</a>
-            </li>
-        </ul>
+        <!-- १. Gaming क्याटेगरी -->
+        <div class="category-section">
+            <div class="category-header" onclick="toggleAccordion('gaming')">
+                <h2>🎮 Gaming (गेमिङ)</h2>
+                <span class="arrow" id="arrow-gaming">▼</span>
+            </div>
+            <div class="category-body" id="body-gaming">
+                <ul id="list-gaming"></ul>
+            </div>
+        </div>
 
-        <!-- टेक्नोलोजी सम्बन्धी पोस्टहरू -->
-        <h2>💻 Tech (टेक्नोलोजी)</h2>
-        <ul>
-            <li>
-                <span class="category">Tech</span>
-                <a href="nepal-telecom-fibernet-installation-guide.html">नेपाल टेलिकमको फाइबर इन्टरनेट कसरी जडान गर्ने?</a>
-            </li>
-            <!-- नयाँ Gmail को लिङ्क यहाँ थपिएको छ -->
-            <li>
-                <span class="category">Tech</span>
-                <a href="gmail-account-create.html">नयाँ Gmail खाता कसरी बनाउने?</a>
-            </li>
-            <li>
-                <span class="category">Tech</span>
-                <a href="gettyimage-account-create.html">नयाँ gettyimage खाता बनाउने तरिका मोबाइल बाट?</a>
-            </li>
-        </ul>
+        <!-- २. App क्याटेगरी -->
+        <div class="category-section">
+            <div class="category-header" onclick="toggleAccordion('app')">
+                <h2>📱 App (एपहरू)</h2>
+                <span class="arrow" id="arrow-app">▼</span>
+            </div>
+            <div class="category-body" id="body-app">
+                <ul id="list-app"></ul>
+            </div>
+        </div>
+
+        <!-- ३. Tech क्याटेगरी -->
+        <div class="category-section">
+            <div class="category-header" onclick="toggleAccordion('tech')">
+                <h2>💻 Tech (टेक्नोलोजी)</h2>
+                <span class="arrow" id="arrow-tech">▼</span>
+            </div>
+            <div class="category-body" id="body-tech">
+                <ul id="list-tech"></ul>
+            </div>
+        </div>
 
     </div>
 
+    <!-- ===================== JAVASCRIPT ===================== -->
+    <script>
+        // १. यहाँ तपाईंका सबै पोस्टहरूको डेटा राख्नुहोस्
+        const blogData = [
+            // Gaming पोस्टहरू
+            { category: "gaming", title: "Dot Snake Game - खेल्नुहोस् र डाउनलोड गर्नुहोस्", file: "dot-snake-game.html" },
+            { category: "gaming", title: "Block Blast Fall - खेल्नुहोस् र डाउनलोड गर्नुहोस्", file: "block-blast-fall-game.html" },
+            
+            // Tech पोस्टहरू
+            { category: "tech", title: "नेपाल टेलिकमको फाइबर इन्टरनेट कसरी जडान गर्ने?", file: "nepal-telecom-fibernet-installation-guide.html" },
+            { category: "tech", title: "नयाँ Gmail खाता कसरी बनाउने?", file: "gmail-account-create.html" },
+            { category: "tech", title: "नयाँ gettyimage खाता बनाउने तरिका मोबाइल बाट?", file: "gettyimage-account-create.html" },
+            
+            // App पोस्टहरू (तपाईंले यहाँ नयाँ एपको फाइल नाम राख्न सक्नुहुन्छ)
+            { category: "app", title: "नयाँ एपको जानकारी चाँडै आउँदैछ...", file: "#" }
+        ];
+
+        // २. पोस्टहरूलाई वेबसाइटमा देखाउने फंक्शन
+        function renderPosts() {
+            // सुरुमा सबै लिस्ट खाली गर्ने
+            document.querySelectorAll('ul[id^="list-"]').forEach(list => list.innerHTML = '');
+
+            // डेटा अनुसार लिस्ट भर्ने
+            blogData.forEach(post => {
+                const list = document.getElementById(`list-${post.category}`);
+                if (list) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span class="post-category-label">${post.category}</span>
+                        <a href="${post.file}">${post.title}</a>
+                    `;
+                    list.appendChild(li);
+                }
+            });
+        }
+
+        // ३. क्याटेगरी खोल्ने र बन्द गर्ने फंक्शन (Accordion Logic)
+        function toggleAccordion(categoryId) {
+            const targetBody = document.getElementById(`body-${categoryId}`);
+            const targetArrow = document.getElementById(`arrow-${categoryId}`);
+            
+            // के यो क्याटेगरी पहिले नै खुला छ?
+            const isOpen = targetBody.classList.contains('active');
+
+            // पहिले सबै क्याटेगरी बन्द गर्ने
+            document.querySelectorAll('.category-body').forEach(body => body.classList.remove('active'));
+            document.querySelectorAll('.arrow').forEach(arrow => arrow.classList.remove('open'));
+
+            // यदि पहिले खुला थिएन भने मात्र खोल्ने
+            if (!isOpen) {
+                targetBody.classList.add('active');
+                targetArrow.classList.add('open');
+            }
+        }
+
+        // ४. पेज लोड हुँदा पोस्टहरू देखाउने
+        document.addEventListener("DOMContentLoaded", () => {
+            renderPosts();
+        });
+    </script>
 </body>
 </html>
